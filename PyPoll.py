@@ -27,6 +27,7 @@ print(curr_time)
 
 total_votes = 0
 # candidate_options = []
+candidate_results = ""
 candidate_votes = {'Charles Casper Stockham':0, 'Diana DeGette':0, 'Raymon Anthony Doane':0}
 file_to_load = os.path.join("..","Resources", "election_results.csv")
 with open(file_to_load, 'r') as election_data:
@@ -46,6 +47,8 @@ print(candidate_votes)
 winning_percentage, winning_count, winning_candidate  = 0, 0,""  
 for k,v in candidate_votes.items():
     vp = round(float(v)/float(total_votes)*100,1)
+    candidate_results += (f"{k}: {vp:.1f}% ({v:,})\n")
+    print(candidate_results)
     if v > winning_count:
         winning_percentage, winning_count, winning_candidate  = vp, v,k
     print(f"{k}: received {vp}% of the vote.")
@@ -67,6 +70,24 @@ with open(file_to_save, "w") as txt_file:
 
     # Write some data to the file.
     
-    txt_file.write("Counties in the Election\n")
-    txt_file.write("------------------------\n")
-    txt_file.write("Arapahoe\nDenver\nJefferson")
+    # txt_file.write("Counties in the Election\n")
+    # txt_file.write("------------------------\n")
+    # txt_file.write("Arapahoe\nDenver\nJefferson")
+
+    election_results = (
+        f"\nElection Results\n"
+        f"-------------------------\n"
+        f"Total Votes: {total_votes:,}\n"
+        f"-------------------------\n")
+    print(election_results, end="")
+    # Save the final vote count to the text file.
+    txt_file.write(election_results)
+    txt_file.write(candidate_results)
+    txt_file.write(f"-------------------------\n")
+    
+file_to_save = os.path.join("..","analysis", "election_results.txt")
+with open(file_to_save, "w") as txt_file:
+    
+    txt_file.write(winning_candidate_summary)
+   
+# candidate_results = (f"{candidate_name}: {vp:.1f}% ({candidate_votes:,})\n")
