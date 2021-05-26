@@ -29,7 +29,9 @@ total_votes = 0
 # candidate_options = []
 candidate_results = ""
 candidate_votes = {'Charles Casper Stockham':0, 'Diana DeGette':0, 'Raymon Anthony Doane':0}
-file_to_load = os.path.join("..","Resources", "election_results.csv")
+county_votes = {  }
+
+file_to_load = os.path.join("election_results.csv")
 with open(file_to_load, 'r') as election_data:
     print(election_data)
     file_reader = csv.reader(election_data)
@@ -37,13 +39,21 @@ with open(file_to_load, 'r') as election_data:
     print(headers)
     for row in file_reader:
         candidate_name = row[2]
+        county_name = row[1]
         candidate_votes[candidate_name] += 1
+        if county_name in county_votes.keys():
+            county_votes[county_name]+=1
+        else:
+            county_votes[county_name]=1
+    
+
         # if candidate_name not in  candidate_options:
         #     candidate_options.append(candidate_name)
         total_votes += 1
     
 print(total_votes)
 print(candidate_votes)
+print(county_votes)        
 winning_percentage, winning_count, winning_candidate  = 0, 0,""  
 for k,v in candidate_votes.items():
     vp = round(float(v)/float(total_votes)*100,1)
@@ -63,8 +73,23 @@ print(winning_candidate_summary)
 
     # print(candidate_options)
 
+county_results = ("county_votes:\n")
+county_percentage, county_count, county_turnout  = 0, 0,""  
+for k,v in county_votes.items():
+    vp = round(float(v)/float(total_votes)*100,1)
+    county_results += (f"{k}: {vp:.1f}% ({v:,})\n")
+    print(county_results)
+    if v > county_count:
+        county_percentage, county_count, county_turnout  = vp, v,k
+    
 
-file_to_save = os.path.join("..","analysis", "election_analysis.txt")
+county_turnout_summary = (
+    f"-------------------------\n"
+    f"Largest County Turnout: {county_turnout}\n"
+    f"-------------------------\n")
+print(county_turnout_summary)
+
+file_to_save = os.path.join("election_analysis.txt")
 
 with open(file_to_save, "w") as txt_file:
 
@@ -84,8 +109,11 @@ with open(file_to_save, "w") as txt_file:
     txt_file.write(election_results)
     txt_file.write(candidate_results)
     txt_file.write(f"-------------------------\n")
+    txt_file.write(county_results)
+    txt_file.write(county_turnout_summary)
     
-file_to_save = os.path.join("..","analysis", "election_results.txt")
+    
+file_to_save = os.path.join("election_results.txt")
 with open(file_to_save, "w") as txt_file:
     
     txt_file.write(winning_candidate_summary)
